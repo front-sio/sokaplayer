@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://cehpstgki6o22"]
+
+[ext_resource type="PackedScene" uid="uid://bbwaph8nauxb" path="res://assets/Characters/Goalkeeper/GoalKeeper.fbx" id="1_vcxs7"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_xelur"]
+
+[node name="Goalkeeper" type="Node3D"]
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+
+[node name="GoalKeeper" parent="RigidBody3D" instance=ExtResource("1_vcxs7")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("CapsuleShape3D_xelur")

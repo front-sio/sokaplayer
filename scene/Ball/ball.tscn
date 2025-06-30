@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://c3e12qdlky0xh"]
+
+[ext_resource type="PackedScene" uid="uid://bo4spml8ixxv3" path="res://assets/Ball/ball.fbx" id="2_fnjmp"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_e7mrt"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2qhsy"]
+
+[node name="RigidBody3D" type="RigidBody3D"]
+input_capture_on_drag = true
+
+[node name="ball" parent="." instance=ExtResource("2_fnjmp")]
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1.115, 0, 0, 0, 1.115, 0, 0, 0, 1.115, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 0, 0, 0)
+shape = SubResource("SphereShape3D_e7mrt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.145, 0, 0, 0, 1.145, 0, 0, 0, 1.145, 0, 0, 0)
+shape = SubResource("SphereShape3D_2qhsy")
+
+[editable path="ball"]

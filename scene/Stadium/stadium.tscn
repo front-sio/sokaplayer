@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://bsk3qqf52kby8"]
+
+[ext_resource type="PackedScene" uid="uid://6723w4yi24k" path="res://assets/Stadium/world_cup_2022_qatar_concept_stadium.glb" id="1_pxmal"]
+
+[node name="Sketchfab_Scene" instance=ExtResource("1_pxmal")]
+
+[node name="Cube_066" parent="Sketchfab_model/Stadium_fbx/RootNode" index="68"]
+visible = false
+
+[node name="Plane_242_Material_091_0" parent="Sketchfab_model/Stadium_fbx/RootNode/Plane_242" index="0"]
+visible = false
+
+[node name="Plane_243_Material_092_0" parent="Sketchfab_model/Stadium_fbx/RootNode/Plane_243" index="0"]
+visible = false
