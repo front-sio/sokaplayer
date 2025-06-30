@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 KeyUtils="*res://utils/KeyUtils.gd"
 
+[debug]
+
+gdscript/warnings/unused_signal=0
+
 [input]
 
 player1_left={

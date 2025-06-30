@@ -3,7 +3,7 @@ extends PlayerState
 
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if player.control_scheme == player.ControlScheme.CPU:
 		player.input_2d_direction = Vector2.ZERO 
 		player.velocity = Vector3.ZERO 

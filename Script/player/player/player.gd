@@ -5,7 +5,7 @@ extends CharacterBody3D
 # Define the control schemes for the player
 enum ControlScheme {CPU, P1, P2}
 # Define the possible states of the player
-enum State {MOVING, TACKLING}
+enum State {MOVING, TACKLING, RECOVERING}
 
 # Export variables for editor control
 @export var control_scheme : ControlScheme

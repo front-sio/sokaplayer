@@ -12,9 +12,9 @@ func _enter_tree() -> void:
 	time_start_tackle = Time.get_ticks_msec()
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if Time.get_ticks_msec() - time_start_tackle > DURATION_TACKLE:
-		state_transition_requested.emit(Player.State.MOVING)
+		state_transition_requested.emit(Player.State.RECOVERING)
 
 #func handle_tackling_state() -> void:
 	#player.velocity = Vector3.ZERO 
