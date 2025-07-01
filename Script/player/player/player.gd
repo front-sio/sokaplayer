@@ -1,32 +1,33 @@
 class_name Player
 extends CharacterBody3D
 
+enum ControlScheme { CPU, P1, P2 }
+enum State { MOVING, TACKLING, RECOVERING, DRIBBLING }
 
-# Define the control schemes for the player
-enum ControlScheme {CPU, P1, P2}
-# Define the possible states of the player
-enum State {MOVING, TACKLING, RECOVERING}
+@export var control_scheme: ControlScheme
+@export var speed: float = 5.0
+@export var ball: Ball  # Assign this in the editor
 
-# Export variables for editor control
-@export var control_scheme : ControlScheme
-@export var speed: float = 5.0 
+@onready var animation_player: AnimationPlayer = $player/AnimationPlayer
 
-# Node references
-@onready var animation_player : AnimationPlayer = $player/AnimationPlayer 
-
-# State variables
 var input_2d_direction: Vector2 = Vector2.ZERO
-var current_state: PlayerState = null 
+var current_state: PlayerState = null
 var state_factory := PlayerStateFactory.new()
-
 
 func _ready() -> void:
 	switch_state(State.MOVING)
 
 func _physics_process(_delta: float) -> void:
-	set_movement_animation()
+	# Handle movement
 	move_and_slide()
 
+	# Automatically switch to DRIBBLING if this player is carrying the ball
+	if ball != null and ball.carrier == self and current_state.name != "PlayerStateMachine: DRIBBLING":
+		switch_state(State.DRIBBLING)
+
+	# Switch back to MOVING if the ball is not carried
+	elif ball != null and ball.carrier != self and current_state.name == "PlayerStateMachine: DRIBBLING":
+		switch_state(State.MOVING)
 
 func switch_state(state: State) -> void:
 	if current_state != null:
@@ -38,11 +39,14 @@ func switch_state(state: State) -> void:
 	call_deferred("add_child", current_state)
 
 func set_movement_animation() -> void:
-			if input_2d_direction.length() > 0.1:
-				var target_rotation_angle = atan2(velocity.x, velocity.z)
-				rotation.y = lerp_angle(rotation.y, target_rotation_angle, 0.2)
-				animation_player.play("Run")
-			else:
-				animation_player.play("Idle")
-		
-			
+	if input_2d_direction.length() > 0.1:
+		var target_rotation_angle = atan2(velocity.x, velocity.z)
+		rotation.y = lerp_angle(rotation.y, target_rotation_angle, 0.2)
+
+		# ✅ Play DRIBBLE animation if in DRIBBLING state
+		if current_state.name == "PlayerStateMachine: DRIBBLING":
+			animation_player.play("Dribble")
+		else:
+			animation_player.play("Run")
+	else:
+		animation_player.play("Idle")

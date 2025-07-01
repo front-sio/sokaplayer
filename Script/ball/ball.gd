@@ -1,43 +1,36 @@
-#extends RigidBody3D
-#class_name Ball
-#
-#@export var reset_position: Vector3 = Vector3.ZERO
-#@export var reset_velocity: Vector3 = Vector3.ZERO
-#@export var reset_angular_velocity: Vector3 = Vector3.ZERO
-#
-#var last_player: Node = null
-#var last_touch_time: float = 0.0
-#
-#func _ready():
-	## Initialize reset position if not set
-	#if reset_position == Vector3.ZERO:
-		#reset_position = global_transform.origin
-#
-	## Connect signal to detect collisions with players
-	#if not is_connected("body_entered", Callable(self, "_on_ball_body_entered")):
-		#connect("body_entered", Callable(self, "_on_ball_body_entered"))
-#
-#func reset():
-	#var new_transform = global_transform
-	#new_transform.origin = reset_position
-	#set_global_transform(new_transform)
-	#linear_velocity = reset_velocity
-	#angular_velocity = reset_angular_velocity
-	#sleeping = false
-#
-#func apply_kick(from: Node, direction: Vector3, strength: float):
-	#if strength <= 0:
-		#return
-	#last_player = from
-	#last_touch_time = Time.get_ticks_msec() / 1000.0
-	#var impulse = direction.normalized() * strength
-	#apply_impulse(Vector3.ZERO, impulse)
-#
-#func _on_ball_body_entered(body: Node):
-	#if body.has_method("on_ball_collision"):
-		#body.on_ball_collision(self)
-#
-#func _integrate_forces(_state):
-	## Gradual slowdown
-	#linear_velocity *= 0.98
-	#angular_velocity *= 0.98
+class_name Ball
+extends RigidBody3D
+
+enum State { CARRIED, FREEFORM, SHOT }
+@onready var mesh = %ball
+@onready var collision = %CollisionShape3D
+@onready var ball_animation_player: AnimationPlayer = %AnimationPlayer
+@onready var player_detection_area: Area3D = %PlayerDetectionArea
+
+@export var dribble_frequency : float
+@export var dribble_intensity : float
+var carrier: Player = null
+var current_state: BallState = null
+var state_factory := BallStateFactory.new()
+var velocity := Vector3.ZERO
+
+func _ready() -> void:
+	mesh.scale = Vector3(0.11, 0.11, 0.11)
+	collision.shape.radius = 0.11
+	switch_state(State.FREEFORM)
+
+func switch_state(state: Ball.State) -> void:
+	if current_state != null:
+		current_state.queue_free()
+
+	# ✅ always assign a new state
+	current_state = state_factory.get_fresh_state(state)
+
+	# 🟡 Optional: reassign carrier if needed
+	# if state == State.CARRIED:
+	#     carrier = self.carrier
+
+	current_state.setup(self, player_detection_area, carrier, ball_animation_player)
+	current_state.state_transition_requested.connect(switch_state)
+	current_state.name = "BallStateMachine"
+	call_deferred("add_child", current_state)
